@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "DynamicArray.h"
 
 using namespace DA;
@@ -12,6 +13,27 @@ using namespace DA;
  DynamicArray::DynamicArray(int size){
      this -> size = size;
      this -> table = new int[size];
+}
+
+DynamicArray::DynamicArray(std::string fileName){
+    std::fstream file;
+    file.open(fileName,std::ios::out);
+    int elementsCount=0;
+    std::string buff;
+    file>>buff;
+    std::stoi(buff)>>elementsCount;
+
+    int* newTable= new int[elementsCount];
+
+
+
+    for(int i=0 ; i<elementsCount ; i++){
+        file>>buff;
+        newTable[i]= std::stoi(buff);
+    }
+
+    this->table = newTable;
+    this -> size = elementsCount;
 }
 
 DynamicArray::~DynamicArray(){
@@ -120,8 +142,9 @@ bool DynamicArray::inRange(int index) {
          std::cout<<"3-add end"<<std::endl;
          std::cout<<"4-add"<<std::endl;
          std::cout<<"5-remove"<<std::endl;
-         std::cout<<"6-show array"<<std::endl;
-         std::cout<<"7-wyjscie"<<std::endl;
+         std::cout<<"6-randomize"<<std::endl;
+         std::cout<<"7-show array"<<std::endl;
+         std::cout<<"8-wyjscie"<<std::endl;
          std::cin>>userInput;
          switch(userInput){
              case 1:{
@@ -163,14 +186,30 @@ bool DynamicArray::inRange(int index) {
                  break;
                  }
              case 6:{
+                 std::cout<<"podaj ilość danych do wylosowania\n";
+                 std::cin>>userInput;
+                 generateRandomData(userInput);
+                 break;
+             }
+             case 7:{
                  std::cout<<toString()<<std::endl;
                  break;
              }
              default:{
-                 userInput=7;
+                 userInput=8;
              }
 
          }
-     }while(userInput!=7);
+     }while(userInput!=8);
  }
 
+void DynamicArray::generateRandomData(int count){
+    srand( time( NULL ) );
+     int* randomTab = new int[count];
+     for(int i=0 ; i<count; i++){
+         randomTab[i] = ((std::rand()%100)+1);
+     }
+     delete[] this->table;
+     this->size = count;
+     this->table = randomTab;
+ }

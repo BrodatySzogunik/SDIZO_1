@@ -10,6 +10,7 @@ namespace DA{
     class DynamicArray {
     public :
         DynamicArray(int size);
+        DynamicArray(std::string fileName);
         ~DynamicArray();
 
 
@@ -26,6 +27,7 @@ namespace DA{
         int search(int value);
         void showInterface();
         std::string toString();
+        void generateRandomData(int count);
 
     private:
         bool inRange(int index);
