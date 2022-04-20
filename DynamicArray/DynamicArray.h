@@ -17,7 +17,7 @@ namespace DA{
         int* table;
         int size ;
 
-
+        void readDataFromFile(std::string fileName);
         void addEnd(int input);
         void add(int index, int input);
         void addStart(int input);
@@ -31,6 +31,12 @@ namespace DA{
 
     private:
         bool inRange(int index);
+        void test();
+        double searchTest(int dataCount);
+        double removeTest(int dataCount);
+        double addTest(int dataCount);
+        double addEndTest(int dataCount);
+        double addStartTest(int dataCount);
 
 
 

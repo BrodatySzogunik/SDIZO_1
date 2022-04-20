@@ -3,7 +3,6 @@
 //
 
 #include <string>
-#include "HeapElement.h"
 
 #ifndef UNTITLED2_HEAP_H
 #define UNTITLED2_HEAP_H
@@ -16,17 +15,29 @@ public:
 
     void add(int value);
     int search(int value);
+    int get(int index);
     bool removeRoot();
     std::string toString();
-    void swapWhenNeeded(int parentIndex, int largestIndex);
-    void heapMax();
+    void swap(int parentIndex, int largestIndex);
+    void heapMax(int pos);
+    void showInterface();
 
 
 private:
     int* heap = {nullptr};
     int size = 0 ;
-
+    int parent(int pos);
+    int leftChild (int pos);
+    int rightChild(int pos);
+    bool isLeaf(int pos);
+    void test();
+    void generateRandomData(int count);
     void repairHeap();
+    void buildHeap();
+    double addTest(int dataCount);
+    double removeTest(int dataCount);
+    double searchTest(int dataCount);
+    void readDataFromFile(std::string fileName);
 
 
 };

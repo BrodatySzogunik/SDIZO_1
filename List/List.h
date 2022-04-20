@@ -20,10 +20,24 @@
         void addEnd(int input);
         void addStart(int value);
         void add( int index,int value);
-        ListElement* search(int index);
+        void removeEnd();
+        void removeStart();
+        ListElement* get(int index);
+        int search(int value);
+
         void remove(int index);
         std::string toString();
         void showInterface();
+        void generateRandomData(int dataCount);
+        void clearList();
+        void test();
+
+        double searchTest(int dataCount);
+        double removeTest(int dataCount);
+        double addTest(int dataCount);
+        double addEndTest(int dataCount);
+        double addStartTest(int dataCount);
+        void readDataFromFile(std::string fileName);
     };
 
 
