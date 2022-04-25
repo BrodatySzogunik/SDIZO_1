@@ -33,11 +33,15 @@ void Heap::repairHeap(){
 }
 
 bool Heap::removeRoot(){
-    int root = this->heap[0];
-    this->heap[0] = this->heap[--this->size];   //zamieniamy ostatni element kopca z korzeniem
-    delete &this->heap[this->size+1];           // usuwamy ostatni element kopca
-    heapMax(0);                            // kopcujemy od korzenia
-    return root;
+    if(this->size>0){
+        this->size--;                          //zmniejszamy rozmiar
+        int *tempTab = new int[this->size];    //tworzymy tabelę o zmniejszonym rozmiarze
+        for (int i = 0; i < this->size; i++) { //kopiujemy elementy  pierwszy element
+            tempTab[i] = this->heap[i+1];
+        }
+        delete[] this->heap;                 //usuwamy starą tabelę
+        this->heap = tempTab;                   //przypisujemy wskaźnik nowej tabeli w miejsce starej
+    }
 }
 
 int Heap::search(int value){
@@ -171,26 +175,18 @@ buildHeap();
 
 void Heap::test(){
     srand(time(NULL));
+    std::fstream file("Heap.txt",std::fstream::out | std::fstream::app);
 
+    file<<"count;addTest;removeTest;searchTest"<<std::endl;
+    for(int i = 1; i<16 ; i++){
+        file<<i*1000<<";"
+            <<addTest(i*1000)<<";"
+            <<removeTest(i*1000)<<";"
+            <<searchTest(i*1000)
+            <<std::endl;
+    }
 
-    addTest(10);
-    addTest(100);
-    addTest(1000);
-    addTest(10000);
-    addTest(100000);
-    addTest(1000000);
-
-    removeTest(100);
-    removeTest(1000);
-    removeTest(10000);
-    removeTest(100000);
-    removeTest(1000000);
-
-    searchTest(100);
-    searchTest(1000);
-    searchTest(10000);
-    searchTest(100000);
-    searchTest(1000000);
+    file.close();
 }
 double Heap::addTest(int dataCount){
     int timeAvg = 0;

@@ -12,7 +12,6 @@
     class List {
     public:
 
-
         ListElement* HEAD = {nullptr};
         ListElement* TAIL = {nullptr};
         int size  = {0};
@@ -20,20 +19,23 @@
         void addEnd(int input);
         void addStart(int value);
         void add( int index,int value);
+
         void removeEnd();
         void removeStart();
+        void remove(int index);
+
         ListElement* get(int index);
         int search(int value);
 
-        void remove(int index);
         std::string toString();
         void showInterface();
         void generateRandomData(int dataCount);
         void clearList();
         void test();
-
         double searchTest(int dataCount);
         double removeTest(int dataCount);
+        double removeStartTest(int dataCount);
+        double removeEndTest(int dataCount);
         double addTest(int dataCount);
         double addEndTest(int dataCount);
         double addStartTest(int dataCount);

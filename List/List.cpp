@@ -34,71 +34,89 @@ void List::addEnd(int value) {
 
 ListElement* List::get(int index){
     ListElement* tempEl;
-    if(index < this->size/2){               //jeżeli indeks znajduje się bliżej początku, interujemy od głowy, jeżeli bliżej końca, iterujemy od ogona
-         tempEl =this->HEAD;
-         for(int i = 0 ; i < index;i++){    // pobieramy następny element aż dotrzemy do poszukiwanego indeksu
-             tempEl = tempEl->next;
-         }
-         return tempEl;
-    }else{
-        tempEl = this->TAIL;
-        for(int i=size-1; i > index; i--){  // pobieramy poprzedni element aż dotrzemy do poszukiwanego indeksu
-            tempEl = tempEl->previous;
+    if(index>=0 && index<this->size){
+        if(index < (this->size/2)){               //jeżeli indeks znajduje się bliżej początku, interujemy od głowy, jeżeli bliżej końca, iterujemy od ogona
+            tempEl =this->HEAD;
+            for(int i = 0 ; i != index;i++){    // pobieramy następny element aż dotrzemy do poszukiwanego indeksu
+                tempEl = tempEl->next;
+            }
+            return tempEl;
+        }else{
+            tempEl = this->TAIL;
+            for(int i=size-1; i != index; i--){  // pobieramy poprzedni element aż dotrzemy do poszukiwanego indeksu
+                tempEl = tempEl->previous;
+            }
+            return tempEl;
         }
-        return tempEl;
     }
+    return {nullptr};
 }
 
 int List::search(int value){
     ListElement* tempElement = this->HEAD;
     int index = 0;
-    do{
-        if(tempElement->value == value){
-            return  index;
-        }
-        index++;
-        tempElement = tempElement->next;
-    }while(tempElement!=nullptr);
+    if(tempElement != nullptr){
+        do{
+            if(tempElement->value == value){
+                return  index;
+            }
+            index++;
+            tempElement = tempElement->next;
+        }while(tempElement!=nullptr);
+    }else{
+
+    }
     return -1;
 }
 
 void List::remove(int index){
-    ListElement* elementToRemove = get(index);
+    if(index>=0 && index<this->size){
+        ListElement* elementToRemove = get(index);
 
-    if(this->HEAD == elementToRemove){
-        this->HEAD= elementToRemove->next;
-        this->HEAD->previous={nullptr};
-    }else if(this->TAIL == elementToRemove){
-        this->TAIL = elementToRemove->previous;
-        this->TAIL->next = {nullptr};
-    }else {
-        elementToRemove->next->previous = elementToRemove->previous;
-        elementToRemove->previous->next = elementToRemove->next;
-        delete elementToRemove;
+            if(this->HEAD == elementToRemove){
+                removeStart();
+            }else if(this->TAIL == elementToRemove){
+                removeEnd();
+            }else {
+                elementToRemove->next->previous = elementToRemove->previous;
+                elementToRemove->previous->next = elementToRemove->next;
+                delete elementToRemove;
+            }
+            this->size--;
 
+    }else{
+        std::cout<<"nie ma takiego indexu"<<std::endl;
     }
-    this->size--;
 }
 
 void List::add(int value,int index){
-    ListElement* tempElement = get(index);                           // szukamy elementu za którym chcemy dodać nowy element
-    ListElement* newElement= new ListElement(value,tempElement,tempElement->next); //tworzymy nowy element
-    tempElement->next->previous=newElement;                             //element za nowym wskazuje na nowy
-    tempElement->next = newElement;                                     //element przed nowym wskazuje na nowy
-
-    this->size++;
+    if(index>=0&&index<this->size){
+        ListElement* tempElement = get(index);
+        ListElement* newElement= new ListElement(value,tempElement,tempElement->next); //tworzymy nowy element
+        if(tempElement->next != nullptr) tempElement->next->previous=newElement;                                                     //element za nowym wskazuje na nowy
+        tempElement->next = newElement;                                                             // szukamy elementu za którym chcemy dodać nowy element
+        if(tempElement == this->TAIL){
+            this->TAIL = this->TAIL->next;
+        }
+                                             //element przed nowym wskazuje na nowy
+        this->size++;
+    }
 }
 
 std::string List::toString(){
     std::string output="";
     ListElement* temp = HEAD;
-    do{
+    if(this->size > 0){
+        do{
 
             output +=std::to_string(temp->value);
             output +=" ; ";
             temp = temp->getNext();
 
-    }while(temp!= nullptr);
+        }while(temp!= nullptr);
+    }else{
+        output = "nie ma wartosci";
+    }
     return output;
 }
 
@@ -111,49 +129,22 @@ void List::generateRandomData(int dataCount){
 };
 
 void List::test(){                      //testy
-    srand(time(NULL));
-    Timer timer;
-    double timeSum;
-    double timeAvg;
-    int numberOfTests=100;
-    int dataCount =0;
-    int randomIndex=0;
+    std::fstream file("List.txt",std::fstream::out | std::fstream::app);
 
-    timeAvg = 0;
-    timeSum = 0;
-    dataCount=100;
+    file<<"count;addEndTest;addStartTest;addTest;removeStartTest;removeEndTest;removeTest;searchTest"<<std::endl;
+    for(int i = 1; i<16 ; i++){
+        file<<i*1000<<";"
+            <<addEndTest(i*1000)<<";"
+            <<addStartTest(i*1000)<<";"
+            <<addTest(i*1000)<<";"
+            <<removeStartTest(i*1000)<<";"
+            <<removeEndTest(i*1000)<<";"
+            <<removeTest(i*1000)<<";"
+            <<searchTest(i*1000)
+            <<std::endl;
+    }
 
-    addEndTest(100);
-    addEndTest(1000);
-    addEndTest(10000);
-    addEndTest(100000);
-    addEndTest(1000000);
-
-    addStartTest(100);
-    addStartTest(1000);
-    addStartTest(10000);
-    addStartTest(100000);
-    addStartTest(1000000);
-
-    addTest(100);
-    addTest(1000);
-    addTest(10000);
-    addTest(100000);
-    addTest(1000000);
-
-    removeTest(100);
-    removeTest(1000);
-    removeTest(10000);
-    removeTest(100000);
-    removeTest(1000000);
-
-
-
-    searchTest(100);
-    searchTest(1000);
-    searchTest(10000);
-    searchTest(100000);
-    searchTest(1000000);
+    file.close();
 
 }
 
@@ -172,6 +163,9 @@ double List::searchTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"search test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
+
+
     return timeAvg;
 }
 
@@ -190,6 +184,41 @@ double List::removeTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"remove test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
+    return timeAvg;
+
+}
+double List::removeStartTest(int dataCount){
+    int timeAvg = 0;
+    int timeSum = 0;
+    int numberOfTests = 100;
+    Timer timer;
+    for(int i=0;i<numberOfTests;i++){
+        generateRandomData(dataCount);
+        timer.startTimer();
+        removeStart();
+        timeSum += timer.getTimer();
+    }
+    timeAvg = timeSum/numberOfTests;
+    std::cout<<"remove start test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
+    return timeAvg;
+}
+
+double List::removeEndTest(int dataCount){
+    int timeAvg = 0;
+    int timeSum = 0;
+    int numberOfTests = 100;
+    Timer timer;
+    for(int i=0;i<numberOfTests;i++){
+        generateRandomData(dataCount);
+        timer.startTimer();
+        removeEnd();
+        timeSum += timer.getTimer();
+    }
+    timeAvg = timeSum/numberOfTests;
+    std::cout<<"remove end test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
@@ -208,6 +237,7 @@ double List::addTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"add test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
@@ -224,27 +254,47 @@ double List::addEndTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"add End test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
 void  List::removeEnd(){
-    ListElement* elementToRemove = this->TAIL;
-    if(elementToRemove != nullptr) {
-        this->TAIL = this->TAIL->previous;
-        this->TAIL->next = {nullptr};
-        delete elementToRemove;
-        this->size--;
+    if(this->size>0){
+        if(this->size==1){
+            delete this->HEAD;
+            this->HEAD = nullptr;
+            this->TAIL = nullptr;
+            this->size = 0 ;
+        }
+        else{
+            ListElement* elementToRemove = this->TAIL;
+            if(elementToRemove != nullptr) {
+                this->TAIL = this->TAIL->previous;
+                this->TAIL->next = {nullptr};
+                delete elementToRemove;
+                this->size--;
+            }
+        }
     }
 }
 
 void  List::removeStart(){
 
-    ListElement* elementToRemove = this->HEAD;
-    if(elementToRemove!= nullptr){
-    this->HEAD= this->HEAD->next;
-    this->HEAD->previous={nullptr};
-    delete elementToRemove;
-    this->size--;
+    if(this->size>0){
+        if(this->size==1){
+            delete this->HEAD;
+            this->HEAD = nullptr;
+            this->TAIL = nullptr;
+            this->size = 0 ;
+        }else {
+            ListElement *elementToRemove = this->HEAD;
+            if (elementToRemove != nullptr) {
+                this->HEAD = this->HEAD->next;
+                this->HEAD->previous = {nullptr};
+                delete elementToRemove;
+                this->size--;
+            }
+        }
     }
 
 }
@@ -262,6 +312,7 @@ double List::addStartTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"add Start test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 void List::clearList() {   //czyszczenie listy
@@ -338,7 +389,7 @@ void List::showInterface(){
                 std::cin>>userInput;
                 std::cout<<"podaj gdzie ma sie znalezc wartosc\n";
                 std::cin>>index;
-                add(index,userInput);
+                add(userInput,index);
                 break;
             }
             case 5:{

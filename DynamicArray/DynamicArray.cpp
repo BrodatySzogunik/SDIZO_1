@@ -84,7 +84,7 @@ DynamicArray::~DynamicArray(){
      this->table = tempTab;
  }
 
- void DynamicArray::removeValue(int index) {        //usuwamy wartość z podanego przez usera indexu
+ void DynamicArray::remove(int index) {        //usuwamy wartość z podanego przez usera indexu
      this->size--;
      int* tempTab = new int[this->size];            //tworzymy pomocniczą tablicę
      int mainTableIterator = 0;
@@ -96,6 +96,30 @@ DynamicArray::~DynamicArray(){
      delete[] table;                                                                    //usuwamy starą tablicę
      this ->table = tempTab;                                                            //podmieniamy wskaźnik na starą tablicę na nowy
  }
+
+ void DynamicArray::removeEnd(){
+     if(this->size>0){
+         this->size--;                          //zmniejszamy rozmiar
+         int *tempTab = new int[this->size];    //tworzymy tabelę o zmniejszonym rozmiarze
+         for (int i = 0; i < this->size; i++) { //kopiujemy elementy pomijając ostatni element
+             tempTab[i] = this->table[i];
+         }
+         delete[] this->table;                 //usuwamy starą tabelę
+         this->table = tempTab;
+     }                //przypisujemy wskaźnik nowej tabeli w miejsce starej
+ };
+
+ void DynamicArray::removeStart(){
+     if(this->size>0){
+         this->size--;                            //zmniejszamy rozmiar
+         int *tempTab = new int[this->size];      //tworzymy tabelę o zmniejszonym rozmiarze
+         for (int i = 0; i < this->size; i++) {   //kopiujemy elementy pomijając pierwszy element
+             tempTab[i] = this->table[i + 1];       //usuwamy starą tabelę
+         }
+         delete[] this->table;                   //przypisujemy wskaźnik nowej tabeli w miejsce starej
+         this->table = tempTab;
+     }
+ };
 
     int DynamicArray::get(int index){
         return table[index];        //zwracamy wartosć znajdującą się pod indeksem podanym przez usera
@@ -145,37 +169,22 @@ bool DynamicArray::inRange(int index) {
      timeSum = 0;
      dataCount=100;
 
-     addEndTest(100);
-     addEndTest(1000);
-     addEndTest(10000);
-     addEndTest(100000);
-     addEndTest(1000000);
+     std::fstream file("Array.txt",std::fstream::out | std::fstream::app);
 
-     addStartTest(100);
-     addStartTest(1000);
-     addStartTest(10000);
-     addStartTest(100000);
-     addStartTest(1000000);
+        file<<"count;addEndTest;addStartTest;addTest;removeStartTest;removeEndTest;removeTest;searchTest"<<std::endl;
+     for(int i = 1; i<16 ; i++){
+         file<<i*1000<<";"
+         <<addEndTest(i*1000)<<";"
+         <<addStartTest(i*1000)<<";"
+         <<addTest(i*1000)<<";"
+         <<removeStartTest(i*1000)<<";"
+         <<removeEndTest(i*1000)<<";"
+         <<removeTest(i*1000)<<";"
+         <<searchTest(i*1000)
+         <<std::endl;
+     }
 
-     addTest(100);
-     addTest(1000);
-     addTest(10000);
-     addTest(100000);
-     addTest(1000000);
-
-     removeTest(100);
-     removeTest(1000);
-     removeTest(10000);
-     removeTest(100000);
-     removeTest(1000000);
-
-
-
-     searchTest(100);
-     searchTest(1000);
-     searchTest(10000);
-     searchTest(100000);
-     searchTest(1000000);
+     file.close();
 
  }
 
@@ -194,6 +203,8 @@ bool DynamicArray::inRange(int index) {
      }
      timeAvg = timeSum/numberOfTests;
      std::cout<<"search test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
+
      return timeAvg;
  }
 
@@ -207,11 +218,45 @@ double DynamicArray::removeTest(int dataCount){
         randomIndex= ((std::rand()%dataCount));
         generateRandomData(dataCount);
         timer.startTimer();
-        removeValue(randomIndex);
+        remove(randomIndex);
         timeSum += timer.getTimer();
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"remove test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
+    return timeAvg;
+}
+double DynamicArray::removeStartTest(int dataCount){
+    int timeAvg = 0;
+    int timeSum = 0;
+    int numberOfTests = 100;
+    Timer timer;
+    for(int i=0;i<numberOfTests;i++){
+        generateRandomData(dataCount);
+        timer.startTimer();
+        removeStart();
+        timeSum += timer.getTimer();
+    }
+    timeAvg = timeSum/numberOfTests;
+    std::cout<<"remove test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
+    return timeAvg;
+}
+
+double DynamicArray::removeEndTest(int dataCount){
+    int timeAvg = 0;
+    int timeSum = 0;
+    int numberOfTests = 100;
+    Timer timer;
+    for(int i=0;i<numberOfTests;i++){
+        generateRandomData(dataCount);
+        timer.startTimer();
+        removeEnd();
+        timeSum += timer.getTimer();
+    }
+    timeAvg = timeSum/numberOfTests;
+    std::cout<<"remove test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
@@ -230,6 +275,7 @@ double DynamicArray::addTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"add test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
@@ -246,6 +292,7 @@ double DynamicArray::addEndTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"add End test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
@@ -262,6 +309,7 @@ double DynamicArray::addStartTest(int dataCount){
     }
     timeAvg = timeSum/numberOfTests;
     std::cout<<"add Start test for "<<dataCount<<" elements :"<<timeAvg<<std::endl;
+
     return timeAvg;
 }
 
@@ -276,12 +324,14 @@ double DynamicArray::addStartTest(int dataCount){
          std::cout<<"2-add start"<<std::endl;
          std::cout<<"3-add end"<<std::endl;
          std::cout<<"4-add"<<std::endl;
-         std::cout<<"5-remove"<<std::endl;
-         std::cout<<"6-randomize"<<std::endl;
-         std::cout<<"7-show array"<<std::endl;
-         std::cout<<"8-test"<<std::endl;
-         std::cout<<"9-get data from file"<<std::endl;
-         std::cout<<"10-Exit"<<std::endl;
+         std::cout<<"5-remove start"<<std::endl;
+         std::cout<<"6-remove end"<<std::endl;
+         std::cout<<"7-remove"<<std::endl;
+         std::cout<<"8-randomize"<<std::endl;
+         std::cout<<"9-show array"<<std::endl;
+         std::cout<<"10-test"<<std::endl;
+         std::cout<<"11-get data from file"<<std::endl;
+         std::cout<<"12-Exit"<<std::endl;
          std::cin>>userInput;
          switch(userInput){
              case 1:{
@@ -317,26 +367,34 @@ double DynamicArray::addStartTest(int dataCount){
                  break;
              }
              case 5:{
-                 std::cout<<"podaj indeks elementu do usuniecia\n";
-                 std::cin>>userInput;
-                 removeValue(userInput);
+                 removeStart();
                  break;
                  }
              case 6:{
+                 removeEnd();
+                 break;
+             }
+             case 7:{
+                 std::cout<<"podaj indeks elementu do usuniecia\n";
+                 std::cin>>userInput;
+                 remove(userInput);
+                 break;
+             }
+             case 8:{
                  std::cout<<"podaj ilosc danych do wylosowania\n";
                  std::cin>>userInput;
                  generateRandomData(userInput);
                  break;
              }
-             case 7:{
+             case 9:{
                  std::cout<<std::endl<<toString()<<std::endl;
                  break;
              }
-             case 8:{
+             case 10:{
                 test();
                  break;
              }
-             case 9:{
+             case 11:{
                  std::string filePath;
                  std::cout<<"file path:"<<std::endl;
                  std::cin>>filePath;
@@ -344,11 +402,11 @@ double DynamicArray::addStartTest(int dataCount){
                  break;
              }
              default:{
-                 userInput=10;
+                 userInput=12;
              }
 
          }
-     }while(userInput!=10);
+     }while(userInput!=12);
  }
 
 void DynamicArray::generateRandomData(int count){  //zapełnianie tablicy losowymi wartościami

@@ -18,10 +18,15 @@ namespace DA{
         int size ;
 
         void readDataFromFile(std::string fileName);
+
         void addEnd(int input);
         void add(int index, int input);
         void addStart(int input);
-        void removeValue(int index);
+
+        void remove(int index);
+        void removeEnd();
+        void removeStart();
+
         void setValue(int index,int value);
         int get(int index);
         int search(int value);
@@ -34,6 +39,8 @@ namespace DA{
         void test();
         double searchTest(int dataCount);
         double removeTest(int dataCount);
+        double removeStartTest(int dataCount);
+        double removeEndTest(int dataCount);
         double addTest(int dataCount);
         double addEndTest(int dataCount);
         double addStartTest(int dataCount);
