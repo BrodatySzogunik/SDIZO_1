@@ -29,7 +29,7 @@ namespace DA{
 
         void setValue(int index,int value);
         int get(int index);
-        int search(int value);
+        void search(int value);
         void showInterface();
         std::string toString();
         void generateRandomData(int count);

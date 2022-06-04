@@ -25,23 +25,30 @@ void Heap::add(int value){
 }
 
 void Heap::repairHeap(){
-    int current = this->size-1;
-    while(this->heap[current]>this->heap[parent(current)]){ //największa wartość wypływa na górę
-        swap(parent(current),current);
-        current = parent(current);
+    int actualChild = this->size-1;                   //rozpoczynamy od ostatnio dodanego węzła
+    int actualParent = parent(actualChild);
+    bool swapped = true;
+    while(actualChild != 0 && swapped  ){             //dopóki jest potrzeba zamiany
+        swapped = swap(actualParent,actualChild);
+        actualChild = actualParent;
+        actualParent = parent(actualParent);
     }
 }
 
 bool Heap::removeRoot(){
     if(this->size>0){
+
         this->size--;                          //zmniejszamy rozmiar
-        int *tempTab = new int[this->size];    //tworzymy tabelę o zmniejszonym rozmiarze
-        for (int i = 0; i < this->size; i++) { //kopiujemy elementy  pierwszy element
-            tempTab[i] = this->heap[i+1];
+        int* tempTab = new int[this->size];    //tworzymy tabelę o zmniejszonym rozmiarze
+        tempTab[0] = this->heap[this->size];
+
+        for (int i = 1; i < this->size; i++) { //kopiujemy elementy  pierwszy element
+            tempTab[i] = this->heap[i];
         }
         delete[] this->heap;                 //usuwamy starą tabelę
         this->heap = tempTab;                   //przypisujemy wskaźnik nowej tabeli w miejsce starej
     }
+    this->heapMax(0);
 }
 
 int Heap::search(int value){
@@ -61,7 +68,6 @@ int Heap::get(int index){
 
 std::string Heap::toString(){
    int heapHeight = floor(log2(this->size));
-   int heapWidth = pow(2,heapHeight)*2;
    int actualHeight = 0;
    int bigSpaceSize=0;
    int smallSpaceSize=0;
@@ -121,37 +127,39 @@ int Heap::parent(int pos){
     return floor(pos/2);
 }
 
-bool Heap::isLeaf(int pos) {
-    if(pos>(size/2) && pos<= size){
-        return true;
-    }else{
-        return false;
-    }
-};
+bool Heap::swap(int firstPos, int secondPos){
 
-void Heap::swap(int firstPos, int secondPos){
-    int temp;
-    temp = this->heap[secondPos];
-    this->heap[secondPos]= this->heap[firstPos];
-    this->heap[firstPos] = temp;
+    if (this->size != 0){                                   //sprawdzamy czy heap nie jest pusty
+        if (this->heap[secondPos] > this->heap[firstPos])   //jeżeli  pierwszy el jest większy od drugiego- następuje zamiana
+        {
+            int value = this->heap[firstPos];
+            this->heap[firstPos] = this->heap[secondPos];
+            this->heap[secondPos] = value;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Heap::heapMax(int pos){
-    if (isLeaf(pos))
-        return;
-    int largest = pos ;
+    int left  = leftChild(pos);
+    int right = rightChild(pos);
+    int largest = pos;
 
-    if(this->heap[largest]<this->heap[leftChild(pos)] && leftChild(pos)<this->size){
-        largest= leftChild(pos);
-    }
-    if(this->heap[largest]<this->heap[rightChild(pos)] && rightChild(pos)<this->size ){
-        largest = rightChild(pos);
+    if (left < this->size && this->heap[left] > this->heap[largest])
+    {
+        largest = left;
     }
 
-    if(this->heap[pos]!=this->heap[largest]){
-        swap(largest,pos);
-        heapMax(largest);
-        heapMax(pos);}
+    if (right < this->size && this->heap[right] > this->heap[largest])
+    {
+        largest = right;
+    }
+
+    if (this->swap(pos, largest))
+    {
+        this->heapMax(largest);
+    }
 
 }
 void Heap::buildHeap(){
@@ -164,7 +172,7 @@ void Heap::generateRandomData(int count) {
     srand( time( NULL ) );
     int* randomTab = new int[count];
     for(int i=0 ; i<count; i++){
-        randomTab[i] = ((std::rand()%1000)+1);
+        randomTab[i] = ((std::rand()%INT_MAX)+1);
     }
     delete[] this->heap;
     this->size = count;
@@ -275,7 +283,7 @@ void Heap::showInterface() {
             case 1:{
                 std::cout<<"wartosc do wyszukania:\n";
                 std::cin>>userInput;
-                std::cout<<search(userInput)<<std::endl;
+                std::cout<<"znaleziono na indexie :"<<search(userInput)<<std::endl;
                 break;
             }
             case 2:{

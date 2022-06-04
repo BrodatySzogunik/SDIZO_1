@@ -18,11 +18,11 @@
 
         void addEnd(int input);
         void addStart(int value);
-        void add( int index,int value);
+        bool add( int index,int value);
 
-        void removeEnd();
-        void removeStart();
-        void remove(int index);
+        bool removeEnd();
+        bool removeStart();
+        bool remove(int index);
 
         ListElement* get(int index);
         int search(int value);

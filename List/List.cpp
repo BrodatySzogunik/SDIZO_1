@@ -69,28 +69,32 @@ int List::search(int value){
     return -1;
 }
 
-void List::remove(int index){
+bool List::remove(int index){
     if(index>=0 && index<this->size){
         ListElement* elementToRemove = get(index);
 
-            if(this->HEAD == elementToRemove){
+            if(elementToRemove == this->HEAD){
                 removeStart();
-            }else if(this->TAIL == elementToRemove){
+            }else if(elementToRemove == this->TAIL){
                 removeEnd();
             }else {
                 elementToRemove->next->previous = elementToRemove->previous;
                 elementToRemove->previous->next = elementToRemove->next;
                 delete elementToRemove;
+                this->size--;
             }
-            this->size--;
+        return  true;
+
 
     }else{
         std::cout<<"nie ma takiego indexu"<<std::endl;
+        return false;
     }
 }
 
-void List::add(int value,int index){
+bool List::add(int value,int index){
     if(index>=0&&index<this->size){
+
         ListElement* tempElement = get(index);
         ListElement* newElement= new ListElement(value,tempElement,tempElement->next); //tworzymy nowy element
         if(tempElement->next != nullptr) tempElement->next->previous=newElement;                                                     //element za nowym wskazuje na nowy
@@ -100,7 +104,13 @@ void List::add(int value,int index){
         }
                                              //element przed nowym wskazuje na nowy
         this->size++;
+        return true;
+    }else if(this->size == 0 && index == 0){
+        addStart(value);
+        return true;
     }
+    std::cout<<"niepoprawny index\n";
+    return false;
 }
 
 std::string List::toString(){
@@ -124,7 +134,7 @@ void List::generateRandomData(int dataCount){
     clearList();
     srand(time(NULL));
     for(int i = 0; i<dataCount;i++){
-        addEnd(((std::rand()%1000)+1));
+        addEnd(((std::rand()%INT_MAX)+1));
     }
 };
 
@@ -258,7 +268,7 @@ double List::addEndTest(int dataCount){
     return timeAvg;
 }
 
-void  List::removeEnd(){
+bool  List::removeEnd(){
     if(this->size>0){
         if(this->size==1){
             delete this->HEAD;
@@ -275,10 +285,14 @@ void  List::removeEnd(){
                 this->size--;
             }
         }
+        return true;
+    }else{
+        std::cout<<"lista pusta\n";
+        return false;
     }
 }
 
-void  List::removeStart(){
+bool  List::removeStart(){
 
     if(this->size>0){
         if(this->size==1){
@@ -294,7 +308,11 @@ void  List::removeStart(){
                 delete elementToRemove;
                 this->size--;
             }
+            return true;
         }
+    }else{
+        std::cout<<"lista pusta\n";
+        return false;
     }
 
 }

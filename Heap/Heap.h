@@ -18,7 +18,7 @@ public:
     int get(int index);
     bool removeRoot();
     std::string toString();
-    void swap(int parentIndex, int largestIndex);
+    bool swap(int parentIndex, int largestIndex);
     void heapMax(int pos);
     void showInterface();
 
@@ -29,7 +29,6 @@ private:
     int parent(int pos);
     int leftChild (int pos);
     int rightChild(int pos);
-    bool isLeaf(int pos);
     void test();
     void generateRandomData(int count);
     void repairHeap();

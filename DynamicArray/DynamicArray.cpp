@@ -131,14 +131,14 @@ DynamicArray::~DynamicArray(){
      }
 }
 
-    int DynamicArray::search(int value) {       // jeżeli znajdziemy element pasujący do wymagań - zwracamy jego wartość, jeżeli nie , zwracamy -1
+    void DynamicArray::search(int value) {       // jeżeli znajdziemy element pasujący do wymagań - zwracamy jego wartość, jeżeli nie , zwracamy -1
     for(int i = 0 ; i<this->size;i++){
         if(this->table[i] == value){
-            return i;
+            return true;
         }
 
     }
-        return -1;
+        return false;
  }
 
  std::string DynamicArray::toString(){      // wyświetlanie tablicy
@@ -413,7 +413,7 @@ void DynamicArray::generateRandomData(int count){  //zapełnianie tablicy losowy
     srand( time( NULL ) );
      int* randomTab = new int[count];
      for(int i=0 ; i<count; i++){
-         randomTab[i] = ((std::rand()%1000)+1);
+         randomTab[i] = ((std::rand()%INT_MAX)+1);
      }
      delete[] this->table;
      this->size = count;
